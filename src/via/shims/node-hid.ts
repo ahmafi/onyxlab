@@ -62,7 +62,9 @@ const ExtendedHID = {
   },
   getFilteredDevices: async () => {
     try {
-      const hidDevices = filterHIDDevices(await window.navigator.hid.getDevices());
+      const hidDevices = filterHIDDevices(
+        await window.navigator.hid.getDevices(),
+      );
       return hidDevices;
     } catch (e) {
       return [];

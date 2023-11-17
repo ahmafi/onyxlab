@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fa" dir="rtl" className="w-full h-full">
-      <body className="w-full h-full bg-gray-950">{children}</body>
+      <body className="w-full h-full">{children}</body>
     </html>
   );
 }

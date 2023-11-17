@@ -1,6 +1,7 @@
 "use client";
 
 import useKeyboardStore from "@/store/keyboard-store";
+import clsx from "clsx";
 
 export default function LayerSelector(props: {
   layer: number;
@@ -9,9 +10,15 @@ export default function LayerSelector(props: {
   const layers = useKeyboardStore((state) => state.layers);
 
   return (
-    <div className="flex mb-4" dir="ltr">
+    <div className="flex tabs tabs-bordered mb-4" dir="ltr">
       {Array.from(Array(layers).keys()).map((layer) => (
-        <div key={layer}>{layer}</div>
+        <button
+          key={layer}
+          className={clsx("tab", layer === props.layer && "tab-active")}
+          onClick={() => props.setLayer(layer)}
+        >
+          {layer + 1}
+        </button>
       ))}
     </div>
   );

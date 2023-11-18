@@ -5,7 +5,7 @@ import { HID } from "@/via/usb-hid";
 import { create } from "zustand";
 
 type State = {
-  connectedDevice: WebVIADevice | null;
+  connectedDevice: WebVIADevice | null | undefined;
   definition: null | Definition;
   keyboard: KeyboardAPI | null;
   layers: number | null;
@@ -17,7 +17,7 @@ type Action = {
 };
 
 const useKeyboardStore = create<State & Action>((set) => ({
-  connectedDevice: null,
+  connectedDevice: undefined,
   definition: null,
   keyboard: null,
   layers: null,

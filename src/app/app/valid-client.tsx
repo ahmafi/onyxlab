@@ -19,30 +19,18 @@ export default function SetupConnection(props: PropsWithChildren<{}>) {
     if (!hasHIDSupport) return;
 
     (async () => {
-      const alreadyConnectedDevices = await HID.devices(false);
-      if (alreadyConnectedDevices.length > 0) {
-        updateConnectedDevice(alreadyConnectedDevices[0]);
+      const alreadyConnectedDevices = await HID.getFilteredDevices();
+      if (alreadyConnectedDevices.length === 0) {
+        updateConnectedDevice(null);
+        return;
+      }
+      const devices = await HID.devices(false);
+      if (devices.length > 0) {
+        updateConnectedDevice(devices[0]);
       }
     })();
     // TODO; run this check multiple times
   }, [hasHIDSupport]);
-
-  if (hasHIDSupport === null) {
-    <div>Loading</div>;
-  }
-
-  if (hasHIDSupport === false) {
-    return (
-      <div className="flex flex-col items-center justify-center fixed inset-0 w-screen h-screen bg-gray-700 opacity-80 text-xl">
-        <div>مرورگر شما از این برنامه پشتیبانی نمی‌کند</div>
-        <div>ترجیحا از آخرین نسخه‌ی مرورگر گوگل کروم استفاده کنید.</div>
-      </div>
-    );
-  }
-
-  if (connectedDevice) {
-    return <>{props.children}</>;
-  }
 
   const connectToHID = async () => {
     const alreadyConnectedDevices = await HID.devices(false);
@@ -56,11 +44,32 @@ export default function SetupConnection(props: PropsWithChildren<{}>) {
     }
   };
 
-  return (
-    <div className="w-full grow flex items-center justify-center">
-      <button className="" onClick={connectToHID}>
-        اتصال کیبورد
-      </button>
-    </div>
-  );
+  if (hasHIDSupport === false) {
+    return (
+      <div className="flex flex-col items-center justify-center fixed inset-0 w-screen h-screen bg-gray-700 opacity-80 text-xl">
+        <div>مرورگر شما از این برنامه پشتیبانی نمی‌کند</div>
+        <div>ترجیحا از آخرین نسخه‌ی مرورگر گوگل کروم استفاده کنید.</div>
+      </div>
+    );
+  }
+
+  if (connectedDevice === undefined) {
+    return (
+      <div className="h-full items-center self-center loading loading-spinner loading-lg text-primary">
+        Loading
+      </div>
+    );
+  }
+
+  if (connectedDevice === null) {
+    return (
+      <div className="w-full grow flex items-center justify-center">
+        <button className="" onClick={connectToHID}>
+          اتصال کیبورد
+        </button>
+      </div>
+    );
+  }
+
+  return <>{props.children}</>;
 }

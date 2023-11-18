@@ -4,8 +4,8 @@ import useKeyboardStore from "@/store/keyboard-store";
 import { Fragment, useRef, useState } from "react";
 import useMeasure from "react-use-measure";
 import Key from "./key";
-import { bToK } from "@/via/keycodes";
 import _ from "lodash";
+import clsx from "clsx";
 
 export default function KeyboardLayout(props: { layer: number }) {
   const [definition, matrix] = useKeyboardStore((state) => [
@@ -25,9 +25,6 @@ export default function KeyboardLayout(props: { layer: number }) {
     84,
   );
 
-  console.log(matrix?.[0].map((m) => bToK[m]));
-
-  console.log(maxX, containerBounds.width);
   return (
     <div
       ref={containerRef}
@@ -38,7 +35,7 @@ export default function KeyboardLayout(props: { layer: number }) {
       {definition?.layouts.keymap.map((row, rowIndex) => {
         let lastWasObject = true;
         if (typeof row[0] === "object") {
-          if (row[0].y) {
+          if (row[0].y !== undefined) {
             y += row[0].y;
           }
         }
@@ -47,7 +44,7 @@ export default function KeyboardLayout(props: { layer: number }) {
           <Fragment key={rowIndex}>
             {row.map((col, colIndex) => {
               if (typeof col === "object") {
-                if (col.x) {
+                if (col.x !== undefined) {
                   x += col.x;
                   if ("r" in col) {
                     r = col.r;
@@ -70,7 +67,10 @@ export default function KeyboardLayout(props: { layer: number }) {
               return (
                 <div
                   key={colIndex}
-                  className="absolute flex items-center justify-center p-1"
+                  className={clsx(
+                    "absolute flex items-center justify-center p-1",
+                    containerBounds.width === 0 && "invisible", // hide until width calculations is done
+                  )}
                   style={{
                     width: `${keySize}px`,
                     height: `${keySize}px`,

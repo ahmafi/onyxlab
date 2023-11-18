@@ -482,4 +482,3 @@ export const kToB = {
 
 export const bToK: { [key: number]: string } = {};
 Object.entries(kToB).forEach(([keycode, byte]) => (bToK[byte] = keycode));
-console.log(bToK);

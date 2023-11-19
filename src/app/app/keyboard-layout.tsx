@@ -4,15 +4,17 @@ import useKeyboardStore from "@/store/keyboard-store";
 import { Fragment, useRef, useState } from "react";
 import useMeasure from "react-use-measure";
 import Key from "./key";
-import _ from "lodash";
+import _, { parseInt } from "lodash";
 import clsx from "clsx";
+import useSelectionStore from "@/store/selection-store";
 
-export default function KeyboardLayout(props: { layer: number }) {
+export default function KeyboardLayout() {
   const [definition, matrix] = useKeyboardStore((state) => [
     state.definition,
     state.matrix,
   ]);
   const [containerRef, containerBounds] = useMeasure();
+  const selectedLayer = useSelectionStore((state) => state.layer);
 
   let x = 0;
   let y = 0;
@@ -24,6 +26,7 @@ export default function KeyboardLayout(props: { layer: number }) {
     52,
     84,
   );
+  let matrixRow = -1;
 
   return (
     <div
@@ -39,6 +42,9 @@ export default function KeyboardLayout(props: { layer: number }) {
             y += row[0].y;
           }
         }
+        matrixRow++;
+        let matrixCol = -1;
+
         x = 0;
         return (
           <Fragment key={rowIndex}>
@@ -53,6 +59,7 @@ export default function KeyboardLayout(props: { layer: number }) {
                 }
                 return null;
               }
+              matrixCol++;
               if (!lastWasObject) {
                 x += 1;
               }
@@ -84,12 +91,14 @@ export default function KeyboardLayout(props: { layer: number }) {
                 >
                   <Key
                     keycode={
-                      matrix?.[props.layer]?.[
+                      matrix?.[selectedLayer]?.[
                         keyRow * definition.matrix.cols + keyCol
                       ] ?? null
                     }
+                    row={keyRow}
+                    col={keyCol}
                   />
-                  {/* {keyRow + '' + keyCol} */}
+                  {/* {keyRow + "" + keyCol} */}
                 </div>
               );
             })}

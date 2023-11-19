@@ -479,6 +479,3 @@ export const kToB = {
   FN_MO13: 0x7c77,
   FN_MO23: 0x7c78,
 };
-
-export const bToK: { [key: number]: string } = {};
-Object.entries(kToB).forEach(([keycode, byte]) => (bToK[byte] = keycode));

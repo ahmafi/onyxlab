@@ -14,6 +14,19 @@ type State = {
 
 type Action = {
   updateConnectedDevice: (connectedDevice: State["connectedDevice"]) => void;
+  updateKeyboard: () => void;
+};
+
+const updateMatrix = async (
+  keyboard: KeyboardAPI,
+  matrixSize: Definition["matrix"],
+) => {
+  const layers = await keyboard.getLayerCount();
+  const matrix: number[][] = [];
+  for (let layerIndex = 0; layerIndex < layers; layerIndex++) {
+    matrix.push(await keyboard.fastReadRawMatrix(matrixSize, layerIndex));
+  }
+  return matrix;
 };
 
 const useKeyboardStore = create<State & Action>((set) => ({
@@ -31,12 +44,19 @@ const useKeyboardStore = create<State & Action>((set) => ({
       definitions[`0x${connectedDevice.productId.toString(16)}`];
     const keyboard = new KeyboardAPI(connectedDevice.path);
     const layers = await keyboard.getLayerCount();
-    const matrix: number[][] = [];
-    for (let layerIndex = 0; layerIndex < layers; layerIndex++) {
-      matrix.push(
-        await keyboard.fastReadRawMatrix(definition.matrix, layerIndex),
-      );
-    }
+    const matrix = await updateMatrix(keyboard, definition.matrix);
+    set(() => ({ connectedDevice, definition, keyboard, layers, matrix }));
+  },
+  updateKeyboard: async () => {
+    const devices = await HID.getFilteredDevices();
+    if (devices.length === 0) return;
+
+    const connectedDevice = (await HID.devices(false))[0];
+    const definition =
+      definitions[`0x${connectedDevice.productId.toString(16)}`];
+    const keyboard = new KeyboardAPI(connectedDevice.path);
+    const layers = await keyboard.getLayerCount();
+    const matrix = await updateMatrix(keyboard, definition.matrix);
     set(() => ({ connectedDevice, definition, keyboard, layers, matrix }));
   },
 }));

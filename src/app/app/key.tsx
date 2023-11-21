@@ -1,6 +1,6 @@
 import useKeyboardStore from "@/store/keyboard-store";
 import useSelectionStore from "@/store/selection-store";
-import { Key, keys, nameToKeycode } from "@/utils/keys";
+import { Key, keys, keycodeToKey, getKey } from "@/utils/keys";
 import clsx from "clsx";
 
 export default function Key(props: {
@@ -27,10 +27,13 @@ export default function Key(props: {
     updateKeyboard();
   };
 
-  let key: Key = { click: "", keycode: 0 };
+  let key: Key | undefined = undefined;
   if (props.keycode !== null) {
-    const keycode: string = nameToKeycode[props.keycode];
-    key = keys[keycode] ?? { click: "??" };
+    key = getKey(props.keycode);
+    // console.log(key);
+    if (key === undefined) {
+      // console.log(props.row, props.col, props.keycode);
+    }
     // console.log(key.click, keycode, props.keycode);
   }
 
@@ -45,10 +48,14 @@ export default function Key(props: {
             "animate-pulse btn-info",
         )}
       >
-        <div className="">{key.unicode ?? key.click}</div>
-        <div className="absolute right-1.5 bottom-1.5 text-lg font-semibold">
-          {key?.persian}
-        </div>
+        <div className="">{key?.unicode ?? key?.click}</div>
+        {key?.held !== undefined && <div className="">{key.held}</div>}
+        {/* {key?.persian !== undefined && ( */}
+        {/*   <div className="absolute right-1.5 bottom-1.5 text-lg font-semibold"> */}
+        {/*     {key.persian} */}
+        {/*   </div> */}
+        {/* )} */}
+
         {/* <div className="absolute text-xs top-0 left-0 right-0"> */}
         {/*   {bToK[props.keycode]} */}
         {/* </div> */}

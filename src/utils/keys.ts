@@ -2,8 +2,11 @@ type categories = "Basic" | "Media" | "Layers" | "Special";
 
 export type Key = {
   keycode: number;
+  keyName?: string;
   click?: string;
   clickMac?: string;
+  clickWindows?: string;
+  clickLinux?: string;
   unicode?: string;
   shift?: string;
   persian?: string;
@@ -11,6 +14,7 @@ export type Key = {
   description?: string;
   categories?: categories[];
   num?: string;
+  held?: string;
 };
 
 // TODO: better typing instead of key: string
@@ -225,7 +229,87 @@ export const keys: Record<string, Key> = {
   // "QK_REBOOT": { keycode: 0x00e6, click: "", description: 'Resets the keyboard. Does not load the bootloader' },
 };
 
-export const nameToKeycode: { [key: number]: string } = {};
+export const keycodeToKey: { [key: number]: Key } = {};
 Object.entries(keys).forEach(
-  ([keyName, { keycode }]) => (nameToKeycode[keycode] = keyName),
+  ([keyName, key]) => (keycodeToKey[key.keycode] = { ...key, keyName }),
 );
+
+const funcs = {
+  // _QK_MODS: 0x0100,
+  // _QK_MODS_MAX: 0x1fff,
+  _QK_MOD_TAP: 0x2000,
+  // _QK_MOD_TAP_MAX: 0x3fff,
+  _QK_LAYER_TAP: 0x4000,
+  // _QK_LAYER_TAP_MAX: 0x4fff,
+  _QK_LAYER_MOD: 0x5000,
+  // _QK_LAYER_MOD_MAX: 0x51ff,
+  _QK_TO: 0x5200,
+  // _QK_TO_MAX: 0x521f,
+  _QK_MOMENTARY: 0x5220,
+  // _QK_MOMENTARY_MAX: 0x523f,
+  _QK_DEF_LAYER: 0x5240,
+  // _QK_DEF_LAYER_MAX: 0x525f,
+  _QK_TOGGLE_LAYER: 0x5260,
+  // _QK_TOGGLE_LAYER_MAX: 0x527f,
+  _QK_ONE_SHOT_LAYER: 0x5280,
+  // _QK_ONE_SHOT_LAYER_MAX: 0x529f,
+  _QK_ONE_SHOT_MOD: 0x52a0,
+  // _QK_ONE_SHOT_MOD_MAX: 0x52bf,
+  _QK_LAYER_TAP_TOGGLE: 0x52c0,
+  // _QK_LAYER_TAP_TOGGLE_MAX: 0x52df,
+  _QK_LAYER_MOD_MASK: 0x1f,
+  _QK_MACRO: 0x7700,
+  // _QK_MACRO_MAX: 0x770f,
+  _QK_KB: 0x7e00,
+  // _QK_KB_MAX: 0x7eff,
+};
+
+const modCodes = {
+  QK_LCTL: 0x0100,
+  QK_LSFT: 0x0200,
+  QK_LALT: 0x0400,
+  QK_LGUI: 0x0800,
+  // QK_RMODS_MIN: 0x1000,
+  QK_RCTL: 0x1100,
+  QK_RSFT: 0x1200,
+  QK_RALT: 0x1400,
+  QK_RGUI: 0x1800,
+};
+
+export function getKey(keycode: number): Key {
+  const func = Object.entries(funcs)
+    .slice()
+    .reverse()
+    .find(([funcName, funcKeycode]) =>
+      (funcKeycode & keycode) === funcKeycode ? [funcName, funcKeycode] : false,
+    );
+  if (func) {
+    const basicKeyCode = 0xff & keycode;
+
+    console.log(func, keycode);
+    if (func[1] === funcs._QK_MOD_TAP) {
+      const modifier = Object.entries(modCodes)
+        .slice()
+        .reverse()
+        .find(([modKeyName, modKeycode]) =>
+          (modKeycode & keycode) === modKeycode
+            ? [modKeyName, modKeycode]
+            : false,
+        );
+
+      return {
+        ...keycodeToKey[basicKeyCode],
+        held: modifier?.[0],
+      };
+    } else if (func[1] === funcs._QK_MOMENTARY) {
+      const layer = 0xf & keycode;
+      return {
+        click: `MO(${layer})`,
+        keycode,
+      };
+    }
+  }
+  return keycodeToKey[keycode] ?? undefined;
+}
+//  1 00000 00000000
+// 10 00000 00000000

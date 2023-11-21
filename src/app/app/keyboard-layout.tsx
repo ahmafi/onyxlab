@@ -1,7 +1,7 @@
 "use client";
 
 import useKeyboardStore from "@/store/keyboard-store";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useRef } from "react";
 import useMeasure from "react-use-measure";
 import Key from "./key";
 import _, { parseInt } from "lodash";
@@ -26,7 +26,6 @@ export default function KeyboardLayout() {
     52,
     84,
   );
-  let matrixRow = -1;
 
   return (
     <div
@@ -42,8 +41,6 @@ export default function KeyboardLayout() {
             y += row[0].y;
           }
         }
-        matrixRow++;
-        let matrixCol = -1;
 
         x = 0;
         return (
@@ -59,7 +56,6 @@ export default function KeyboardLayout() {
                 }
                 return null;
               }
-              matrixCol++;
               if (!lastWasObject) {
                 x += 1;
               }
@@ -89,15 +85,17 @@ export default function KeyboardLayout() {
                     transform: `rotate(${r}deg)`,
                   }}
                 >
-                  <Key
-                    keycode={
-                      matrix?.[selectedLayer]?.[
-                        keyRow * definition.matrix.cols + keyCol
-                      ] ?? null
-                    }
-                    row={keyRow}
-                    col={keyCol}
-                  />
+                  {containerBounds.width !== 0 && (
+                    <Key
+                      keycode={
+                        matrix?.[selectedLayer]?.[
+                          keyRow * definition.matrix.cols + keyCol
+                        ] ?? null
+                      }
+                      row={keyRow}
+                      col={keyCol}
+                    />
+                  )}
                   {/* {keyRow + "" + keyCol} */}
                 </div>
               );

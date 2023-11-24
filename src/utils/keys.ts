@@ -286,7 +286,7 @@ export function getKey(keycode: number): Key {
   if (func) {
     const basicKeyCode = 0xff & keycode;
 
-    console.log(func, keycode);
+    // console.log(func, keycode);
     if (func[1] === funcs._QK_MOD_TAP) {
       const modifier = Object.entries(modCodes)
         .slice()
@@ -302,6 +302,7 @@ export function getKey(keycode: number): Key {
         held: modifier?.[0],
       };
     } else if (func[1] === funcs._QK_MOMENTARY) {
+      //
       const layer = 0xf & keycode;
       return {
         click: `MO(${layer})`,

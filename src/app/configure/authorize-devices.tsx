@@ -2,7 +2,6 @@
 
 import useKeyboardStore from "@/store/keyboard-store";
 import { KeyboardAPI, KeyboardValue } from "@/via/keyboard-api";
-import keycodes, { bToK } from "@/via/keycodes";
 import { HID } from "@/via/usb-hid";
 import { useEffect, useRef, useState } from "react";
 
@@ -23,14 +22,14 @@ export default function AuthorizeDevices() {
 
   const getDevices = async () => {
     const device = await HID.requestDevice();
-    if (!device) return;
+    if (device === null) return;
 
     await newDeviceAdded();
   };
 
   const disconnect = async () => {
     // connectedDevice?.removeEventListener
-    await connectedDevice?.forget();
+    // await connectedDevice?.forget();
     updateConnectedDevice(null);
     isConnectedRef.current = false;
   };
@@ -78,8 +77,8 @@ export default function AuthorizeDevices() {
     const protocolVersion = await keyboard.getProtocolVersion();
     console.log(protocolVersion);
     console.log(await keyboard.getLayerCount());
-    console.log(bToK[await keyboard.getKey(0, 0, 0)]);
-    console.log(bToK[await keyboard.getKey(0, 0, 1)]);
+    // console.log(bToK[await keyboard.getKey(0, 0, 0)]);
+    // console.log(bToK[await keyboard.getKey(0, 0, 1)]);
     console.log(await keyboard.fastReadRawMatrix({ rows: 8, cols: 6 }, 0));
     // await connectedDevice.sendReport(0, new Uint8Array([0]));
   };

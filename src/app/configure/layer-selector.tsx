@@ -2,6 +2,7 @@
 
 import useKeyboardStore from "@/store/keyboard-store";
 import useSelectionStore from "@/store/selection-store";
+import { localizeDigits } from "@/utils/i18n";
 import clsx from "clsx";
 
 export default function LayerSelector() {
@@ -17,7 +18,7 @@ export default function LayerSelector() {
           className={clsx("tab", layer === selectedLayer && "tab-active")}
           onClick={() => updateLayer(layer)}
         >
-          {layer + 1}
+          {localizeDigits((layer + 1).toString())}
         </button>
       ))}
     </div>

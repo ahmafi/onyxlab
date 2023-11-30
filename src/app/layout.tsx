@@ -3,6 +3,7 @@ import { Inter, Vazirmatn, Nunito } from "next/font/google";
 import "./globals.css";
 import Header from "./Header";
 import clsx from "clsx";
+import GoogleAnalytics from "./google-analytics";
 
 // https://dev.to/sdorra/nextjs-13-fonts-with-tailwind-2l4l
 const inter = Nunito({ subsets: ["latin"], variable: "--english-font" });
@@ -32,7 +33,8 @@ export default function RootLayout({
       dir="rtl"
       className={clsx("w-full h-full", vazirmatn.variable, inter.variable)}
     >
-      <body className="w-full min-h-full font-persian">
+      <GoogleAnalytics />
+      <body className="w-full h-full font-persian flex flex-col">
         <Header />
         {children}
       </body>

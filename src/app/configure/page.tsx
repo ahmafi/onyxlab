@@ -3,7 +3,7 @@ import SetupConnection from "./valid-client";
 
 export default function App() {
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full h-full flex flex-col">
       <SetupConnection>
         <LayoutEditor />
       </SetupConnection>

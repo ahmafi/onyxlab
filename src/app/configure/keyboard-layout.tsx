@@ -1,14 +1,12 @@
 "use client";
 
 import useKeyboardStore from "@/store/keyboard-store";
-import { Fragment, useRef } from "react";
+import { useRef } from "react";
 import useMeasure from "react-use-measure";
 import Key from "./key";
-import _, { parseInt } from "lodash";
-import clsx from "clsx";
+import _ from "lodash";
 import useSelectionStore from "@/store/selection-store";
-import Drawer from "@/store/components/drawer";
-import { keys } from "@/utils/keys";
+import KeySelector from "./key-selector";
 
 export default function KeyboardLayout() {
   const [definition, matrix] = useKeyboardStore((state) => [
@@ -73,13 +71,7 @@ export default function KeyboardLayout() {
           </div>
         );
       })}
-      <Drawer open={changingKey !== null} onClose={unsetChangingKey}>
-        <ul className="overflow-y-auto">
-          {Object.entries(keys).map(([keyName, key]) => (
-            <li key={keyName}>{key.click}</li>
-          ))}
-        </ul>
-      </Drawer>
+      <KeySelector />
     </div>
   );
 }

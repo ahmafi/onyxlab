@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Logo from "./assets/logo.svg";
 import { IoMenu } from "react-icons/io5";
-import Dropdown from "@/store/components/dropdown";
+import Dropdown from "@/components/dropdown";
 
 const items = [
   { title: "فروشگاه", href: "/store" },
@@ -27,12 +27,6 @@ export default function Header() {
               ))}
             </ul>
           </Dropdown>
-          <Link href="/" className="hidden lg:flex">
-            <Logo
-              alt="Onyx Labs Logo"
-              className="w-48 btn btn-ghost text-primary mx-2"
-            />
-          </Link>
         </div>
         <div className="navbar-center">
           <Link href="/" className="lg:hidden">
@@ -49,7 +43,14 @@ export default function Header() {
             ))}
           </ul>
         </div>
-        <div className="navbar-end"></div>
+        <div className="navbar-end">
+          <Link href="/" className="hidden lg:flex">
+            <Logo
+              alt="Onyx Labs Logo"
+              className="w-48 btn btn-ghost text-primary mx-2"
+            />
+          </Link>
+        </div>
       </div>
     </div>
   );

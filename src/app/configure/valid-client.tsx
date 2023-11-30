@@ -16,15 +16,17 @@ export default function SetupConnection(props: PropsWithChildren<object>) {
   }, []);
 
   useEffect(() => {
-    if (hasHIDSupport === null) return;
+    if (hasHIDSupport === null || hasHIDSupport === false) return;
 
     (async () => {
       const alreadyConnectedDevices = await HID.getFilteredDevices();
+      console.log(alreadyConnectedDevices);
       if (alreadyConnectedDevices.length === 0) {
         updateConnectedDevice(null);
         return;
       }
       const devices = await HID.devices(false);
+      console.log(devices);
       if (devices.length > 0) {
         updateConnectedDevice(devices[0]);
       }
@@ -63,9 +65,12 @@ export default function SetupConnection(props: PropsWithChildren<object>) {
 
   if (connectedDevice === null) {
     return (
-      <div className="w-full grow flex items-center justify-center">
-        <button className="" onClick={connectToHID}>
+      <div className="w-1/2 h-full grow flex flex-col gap-6 items-center justify-center">
+        <button className="btn btn-lg" onClick={connectToHID}>
           اتصال کیبورد
+        </button>
+        <button className="btn btn-lg self-center">
+          نمایش تنظیمات بدون اتصال
         </button>
       </div>
     );

@@ -34,9 +34,9 @@ export default function Drawer(props: {
       <motion.div
         animate={props.open ? show : hide}
         transition={{ stiffness: 0 }}
-        className="h-44 overflow-y-auto text-base fixed flex flex-col bottom-0 right-0 left-0 bg-base-300 shadow p-2 z-10"
+        className="h-72 overflow-y-auto text-base fixed flex flex-col bottom-0 right-0 left-0 bg-base-300 shadow-lg rounded-t-3xl p-4 z-10"
       >
-        <button onClick={props.onClose}>X</button>
+        {/* <button onClick={props.onClose}>X</button> */}
         {props.children}
       </motion.div>
     </OutsideClickHandler>

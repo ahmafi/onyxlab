@@ -1,3 +1,4 @@
+import { Key } from "@/utils/keys";
 import { create } from "zustand";
 
 type KeyPosition = {
@@ -5,8 +6,14 @@ type KeyPosition = {
   col: number;
 };
 
+export type KeyParts = "clicked" | "held";
+
 type State = {
-  changingKey: KeyPosition | null;
+  changingKey: {
+    position: KeyPosition;
+    part: KeyParts;
+    key: Key | undefined;
+  } | null;
   layer: number;
 };
 

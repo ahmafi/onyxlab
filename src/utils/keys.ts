@@ -15,6 +15,7 @@ export type Key = {
   categories?: categories[];
   num?: string;
   held?: string;
+  heldUnicode?: string;
 };
 
 // TODO: better typing instead of key: string
@@ -93,13 +94,13 @@ export const keys: Record<string, Key> = {
   "KC_INSERT": { keycode: 0x0049, click: "Insert" },
   "KC_HOME": { keycode: 0x004a, click: "Home" },
   "KC_PAGE_UP": { keycode: 0x004b, click: "Page Up" },
-  "KC_DELETE": { keycode: 0x004c, click: "Forward Delete" },
+  "KC_DELETE": { keycode: 0x004c, click: "Forward Delete", unicode: '⌦' },
   "KC_END": { keycode: 0x004d, click: "End" },
   "KC_PAGE_DOWN": { keycode: 0x004e, click: "Page Down" },
   "KC_RIGHT": { keycode: 0x004f, click: "Right Arrow" },
   "KC_LEFT": { keycode: 0x0050, click: "Left Arrow" },
   "KC_DOWN": { keycode: 0x0051, click: "Down Arrow" },
-  "KC_UP": { keycode: 0x0052, click: "Up Arrow" },
+  "KC_UP": { keycode: 0x0052, click: "Up Arrow", unicode: '↑' },
   "KC_NUM_LOCK": { keycode: 0x0053, click: "Num Lock" },
   "KC_KP_SLASH": { keycode: 0x0054, click: "/" },
   "KC_KP_ASTERISK": { keycode: 0x0055, click: "*" },
@@ -107,11 +108,11 @@ export const keys: Record<string, Key> = {
   "KC_KP_PLUS": { keycode: 0x0057, click: "+" },
   "KC_KP_ENTER": { keycode: 0x0058, click: "Enter" },
   "KC_KP_1": { keycode: 0x0059, click: "1", num: "End" },
-  "KC_KP_2": { keycode: 0x005a, click: "2", num: "Down Arrow" },
+  "KC_KP_2": { keycode: 0x005a, click: "2", num: "Down Arrow", unicode: '↓' },
   "KC_KP_3": { keycode: 0x005b, click: "3", num: "Page Down" },
-  "KC_KP_4": { keycode: 0x005c, click: "4", num: "Left Arrow" },
+  "KC_KP_4": { keycode: 0x005c, click: "4", num: "Left Arrow", unicode: '←' },
   "KC_KP_5": { keycode: 0x005d, click: "5" },
-  "KC_KP_6": { keycode: 0x005e, click: "6", num: "Right Arrow" },
+  "KC_KP_6": { keycode: 0x005e, click: "6", num: "Right Arrow", unicode: '→' },
   "KC_KP_7": { keycode: 0x005f, click: "7", num: "Home" },
   "KC_KP_8": { keycode: 0x0060, click: "8", num: "Up Arrow" },
   "KC_KP_9": { keycode: 0x0061, click: "9", num: "Page Up" },
@@ -213,7 +214,7 @@ export const keys: Record<string, Key> = {
   // "KC_MISSION_CONTROL": { keycode: 0x00c1, click: "Mission Control" },
   // "KC_LAUNCHPAD": { keycode: 0x00c2, click: "Launchpad" },
   "KC_LEFT_CTRL": { keycode: 0x00e0, click: "Left Control" },
-  "KC_LEFT_SHIFT": { keycode: 0x00e1, click: "Left Shift" },
+  "KC_LEFT_SHIFT": { keycode: 0x00e1, held: "Left Shift", heldUnicode: '⇧' },
   "KC_LEFT_ALT": { keycode: 0x00e2, click: "Left Alt" },
   "KC_LEFT_GUI": { keycode: 0x00e3, clickWindows: "Windows", clickMac: "Command", clickLinux: "Meta" },
   "KC_RIGHT_CTRL": { keycode: 0x00e4, click: "Right Control" },
@@ -234,83 +235,5 @@ Object.entries(keys).forEach(
   ([keyName, key]) => (keycodeToKey[key.keycode] = { ...key, keyName }),
 );
 
-const funcs = {
-  // _QK_MODS: 0x0100,
-  // _QK_MODS_MAX: 0x1fff,
-  _QK_MOD_TAP: 0x2000,
-  // _QK_MOD_TAP_MAX: 0x3fff,
-  _QK_LAYER_TAP: 0x4000,
-  // _QK_LAYER_TAP_MAX: 0x4fff,
-  _QK_LAYER_MOD: 0x5000,
-  // _QK_LAYER_MOD_MAX: 0x51ff,
-  _QK_TO: 0x5200,
-  // _QK_TO_MAX: 0x521f,
-  _QK_MOMENTARY: 0x5220,
-  // _QK_MOMENTARY_MAX: 0x523f,
-  _QK_DEF_LAYER: 0x5240,
-  // _QK_DEF_LAYER_MAX: 0x525f,
-  _QK_TOGGLE_LAYER: 0x5260,
-  // _QK_TOGGLE_LAYER_MAX: 0x527f,
-  _QK_ONE_SHOT_LAYER: 0x5280,
-  // _QK_ONE_SHOT_LAYER_MAX: 0x529f,
-  _QK_ONE_SHOT_MOD: 0x52a0,
-  // _QK_ONE_SHOT_MOD_MAX: 0x52bf,
-  _QK_LAYER_TAP_TOGGLE: 0x52c0,
-  // _QK_LAYER_TAP_TOGGLE_MAX: 0x52df,
-  _QK_LAYER_MOD_MASK: 0x1f,
-  _QK_MACRO: 0x7700,
-  // _QK_MACRO_MAX: 0x770f,
-  _QK_KB: 0x7e00,
-  // _QK_KB_MAX: 0x7eff,
-};
-
-const modCodes = {
-  QK_LCTL: 0x0100,
-  QK_LSFT: 0x0200,
-  QK_LALT: 0x0400,
-  QK_LGUI: 0x0800,
-  // QK_RMODS_MIN: 0x1000,
-  QK_RCTL: 0x1100,
-  QK_RSFT: 0x1200,
-  QK_RALT: 0x1400,
-  QK_RGUI: 0x1800,
-};
-
-export function getKey(keycode: number): Key {
-  const func = Object.entries(funcs)
-    .slice()
-    .reverse()
-    .find(([funcName, funcKeycode]) =>
-      (funcKeycode & keycode) === funcKeycode ? [funcName, funcKeycode] : false,
-    );
-  if (func) {
-    const basicKeyCode = 0xff & keycode;
-
-    // console.log(func, keycode);
-    if (func[1] === funcs._QK_MOD_TAP) {
-      const modifier = Object.entries(modCodes)
-        .slice()
-        .reverse()
-        .find(([modKeyName, modKeycode]) =>
-          (modKeycode & keycode) === modKeycode
-            ? [modKeyName, modKeycode]
-            : false,
-        );
-
-      return {
-        ...keycodeToKey[basicKeyCode],
-        held: modifier?.[0],
-      };
-    } else if (func[1] === funcs._QK_MOMENTARY) {
-      //
-      const layer = 0xf & keycode;
-      return {
-        click: `MO(${layer})`,
-        keycode,
-      };
-    }
-  }
-  return keycodeToKey[keycode] ?? undefined;
-}
 //  1 00000 00000000
 // 10 00000 00000000

@@ -178,6 +178,7 @@ export class KeyboardAPI {
 
   async getLayerCount() {
     const version = await this.getProtocolVersion();
+    console.log("version", version);
     if (version >= PROTOCOL_BETA) {
       const [, count] = await this.hidCommand(
         APICommand.DYNAMIC_KEYMAP_GET_LAYER_COUNT,
@@ -579,7 +580,7 @@ export class KeyboardAPI {
             }, time),
           ),
       });
-      if (this.commandQueueWrapper?.isFlushing === undefined) {
+      if (this.commandQueueWrapper?.isFlushing === false) {
         this.flushQueue();
       }
     });
@@ -595,7 +596,7 @@ export class KeyboardAPI {
         rej,
         args: [command, bytes],
       });
-      if (this.commandQueueWrapper?.isFlushing === undefined) {
+      if (this.commandQueueWrapper?.isFlushing === false) {
         this.flushQueue();
       }
     });

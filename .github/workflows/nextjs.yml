@@ -59,7 +59,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.json') }}-
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm install
       - name: Build with Next.js
         run: npx --no-install next build
       - name: Static HTML export with Next.js

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type { AuthorizedDevice, ConnectedDevice, WebVIADevice } from "../types";
 // This is a bit cray
 const globalBuffer: {

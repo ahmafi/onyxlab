@@ -1,3 +1,4 @@
+/* eslint-disable */
 type USBMonitorEvent = "remove" | "change";
 export class usbDetect {
   static _listeners: { change: Function[]; remove: Function[] } = {

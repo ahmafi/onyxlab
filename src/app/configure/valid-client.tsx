@@ -4,7 +4,7 @@ import useKeyboardStore from "@/store/keyboard-store";
 import { HID } from "@/via/usb-hid";
 import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
 
-export default function SetupConnection(props: PropsWithChildren<{}>) {
+export default function SetupConnection(props: PropsWithChildren<object>) {
   const [hasHIDSupport, setHasHIDSupport] = useState<boolean | null>(null);
   const connectedDevice = useKeyboardStore((state) => state.connectedDevice);
   const updateConnectedDevice = useKeyboardStore(
@@ -16,7 +16,7 @@ export default function SetupConnection(props: PropsWithChildren<{}>) {
   }, []);
 
   useEffect(() => {
-    if (!hasHIDSupport) return;
+    if (hasHIDSupport === null) return;
 
     (async () => {
       const alreadyConnectedDevices = await HID.getFilteredDevices();

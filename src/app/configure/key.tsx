@@ -4,9 +4,6 @@ import useKeyboardStore from "@/store/keyboard-store";
 import useSelectionStore from "@/store/selection-store";
 import { Key, keys, keycodeToKey, getKey } from "@/utils/keys";
 import clsx from "clsx";
-import { useRef, useState } from "react";
-import useFitText from "use-fit-text";
-import { TextFit } from "react-textfit";
 
 export default function Key(props: {
   keycode: number | null;

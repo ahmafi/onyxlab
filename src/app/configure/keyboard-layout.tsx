@@ -24,9 +24,6 @@ export default function KeyboardLayout() {
     }),
   );
 
-  let x = 0;
-  let y = 0;
-  let r = 0;
   const maxX = useRef(0);
   const maxY = useRef(0);
   const keySize = _.clamp(
@@ -60,7 +57,7 @@ export default function KeyboardLayout() {
               top: key.y * keySize,
               width: keySize,
               height: keySize,
-              transform: `rotate(${key.r}deg)`,
+              ...(key.r !== null && { transform: `rotate(${key.r}deg)` }),
             }}
           >
             <Key

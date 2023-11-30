@@ -32,9 +32,9 @@ enum APICommand {
   DYNAMIC_KEYMAP_SET_ENCODER = 0x15,
 
   // DEPRECATED:
-  BACKLIGHT_CONFIG_SET_VALUE = 0x07,
-  BACKLIGHT_CONFIG_GET_VALUE = 0x08,
-  BACKLIGHT_CONFIG_SAVE = 0x09,
+  // BACKLIGHT_CONFIG_SET_VALUE = 0x07,
+  // BACKLIGHT_CONFIG_GET_VALUE = 0x08,
+  // BACKLIGHT_CONFIG_SAVE = 0x09,
 }
 
 const APICommandValueToName = Object.entries(APICommand).reduce(
@@ -79,7 +79,7 @@ export const PROTOCOL_ALPHA = 7;
 export const PROTOCOL_BETA = 8;
 export const PROTOCOL_GAMMA = 9;
 
-const cache: { [addr: string]: { hid: any } } = {};
+const cache: { [addr: string]: { hid: any } | undefined } = {};
 
 const eqArr = <T>(arr1: T[], arr2: T[]) => {
   if (arr1.length !== arr2.length) {
@@ -121,7 +121,9 @@ type CommandQueueEntry = {
 type CommandQueue = Array<CommandQueueEntry>;
 
 const globalCommandQueue: {
-  [kbAddr: string]: { isFlushing: boolean; commandQueue: CommandQueue };
+  [kbAddr: string]:
+    | { isFlushing: boolean; commandQueue: CommandQueue }
+    | undefined;
 } = {};
 
 export const canConnect = (device: Device) => {
@@ -375,85 +377,85 @@ export class KeyboardAPI {
     ]);
   }
 
-  async getBacklightValue(
-    command: LightingValue,
-    resultLength = 1,
-  ): Promise<number[]> {
-    const bytes = [command];
-    const res = await this.hidCommand(
-      APICommand.BACKLIGHT_CONFIG_GET_VALUE,
-      bytes,
-    );
-    return res.slice(2, 2 + resultLength);
-  }
-
-  async setBacklightValue(command: LightingValue, ...rest: number[]) {
-    const bytes = [command, ...rest];
-    await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SET_VALUE, bytes);
-  }
-
-  async getRGBMode() {
-    const bytes = [BACKLIGHT_EFFECT];
-    const [, , val] = await this.hidCommand(
-      APICommand.BACKLIGHT_CONFIG_GET_VALUE,
-      bytes,
-    );
-    return val;
-  }
-
-  async getBrightness() {
-    const bytes = [BACKLIGHT_BRIGHTNESS];
-    const [, , brightness] = await this.hidCommand(
-      APICommand.BACKLIGHT_CONFIG_GET_VALUE,
-      bytes,
-    );
-    return brightness;
-  }
-
-  async getColor(colorNumber: number) {
-    const bytes = [colorNumber === 1 ? BACKLIGHT_COLOR_1 : BACKLIGHT_COLOR_2];
-    const [, , hue, sat] = await this.hidCommand(
-      APICommand.BACKLIGHT_CONFIG_GET_VALUE,
-      bytes,
-    );
-    return { hue, sat };
-  }
-
-  async setColor(colorNumber: number, hue: number, sat: number) {
-    const bytes = [
-      colorNumber === 1 ? BACKLIGHT_COLOR_1 : BACKLIGHT_COLOR_2,
-      hue,
-      sat,
-    ];
-    await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SET_VALUE, bytes);
-  }
-
-  async getCustomColor(colorNumber: number) {
-    const bytes = [BACKLIGHT_CUSTOM_COLOR, colorNumber];
-    const [, , , hue, sat] = await this.hidCommand(
-      APICommand.BACKLIGHT_CONFIG_GET_VALUE,
-      bytes,
-    );
-    return { hue, sat };
-  }
-
-  async setCustomColor(colorNumber: number, hue: number, sat: number) {
-    const bytes = [BACKLIGHT_CUSTOM_COLOR, colorNumber, hue, sat];
-    await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SET_VALUE, bytes);
-  }
-
-  async setRGBMode(effect: number) {
-    const bytes = [BACKLIGHT_EFFECT, effect];
-    await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SET_VALUE, bytes);
-  }
+  // async getBacklightValue(
+  //   command: LightingValue,
+  //   resultLength = 1,
+  // ): Promise<number[]> {
+  //   const bytes = [command];
+  //   const res = await this.hidCommand(
+  //     APICommand.BACKLIGHT_CONFIG_GET_VALUE,
+  //     bytes,
+  //   );
+  //   return res.slice(2, 2 + resultLength);
+  // }
+  //
+  // async setBacklightValue(command: LightingValue, ...rest: number[]) {
+  //   const bytes = [command, ...rest];
+  //   await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SET_VALUE, bytes);
+  // }
+  //
+  // async getRGBMode() {
+  //   const bytes = [BACKLIGHT_EFFECT];
+  //   const [, , val] = await this.hidCommand(
+  //     APICommand.BACKLIGHT_CONFIG_GET_VALUE,
+  //     bytes,
+  //   );
+  //   return val;
+  // }
+  //
+  // async getBrightness() {
+  //   const bytes = [BACKLIGHT_BRIGHTNESS];
+  //   const [, , brightness] = await this.hidCommand(
+  //     APICommand.BACKLIGHT_CONFIG_GET_VALUE,
+  //     bytes,
+  //   );
+  //   return brightness;
+  // }
+  //
+  // async getColor(colorNumber: number) {
+  //   const bytes = [colorNumber === 1 ? BACKLIGHT_COLOR_1 : BACKLIGHT_COLOR_2];
+  //   const [, , hue, sat] = await this.hidCommand(
+  //     APICommand.BACKLIGHT_CONFIG_GET_VALUE,
+  //     bytes,
+  //   );
+  //   return { hue, sat };
+  // }
+  //
+  // async setColor(colorNumber: number, hue: number, sat: number) {
+  //   const bytes = [
+  //     colorNumber === 1 ? BACKLIGHT_COLOR_1 : BACKLIGHT_COLOR_2,
+  //     hue,
+  //     sat,
+  //   ];
+  //   await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SET_VALUE, bytes);
+  // }
+  //
+  // async getCustomColor(colorNumber: number) {
+  //   const bytes = [BACKLIGHT_CUSTOM_COLOR, colorNumber];
+  //   const [, , , hue, sat] = await this.hidCommand(
+  //     APICommand.BACKLIGHT_CONFIG_GET_VALUE,
+  //     bytes,
+  //   );
+  //   return { hue, sat };
+  // }
+  //
+  // async setCustomColor(colorNumber: number, hue: number, sat: number) {
+  //   const bytes = [BACKLIGHT_CUSTOM_COLOR, colorNumber, hue, sat];
+  //   await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SET_VALUE, bytes);
+  // }
+  //
+  // async setRGBMode(effect: number) {
+  //   const bytes = [BACKLIGHT_EFFECT, effect];
+  //   await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SET_VALUE, bytes);
+  // }
 
   async commitCustomMenu(channel: number) {
     await this.hidCommand(APICommand.CUSTOM_MENU_SAVE, [channel]);
   }
 
-  async saveLighting() {
-    await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SAVE);
-  }
+  // async saveLighting() {
+  //   await this.hidCommand(APICommand.BACKLIGHT_CONFIG_SAVE);
+  // }
 
   async resetEEPROM() {
     await this.hidCommand(APICommand.EEPROM_RESET);
@@ -566,7 +568,7 @@ export class KeyboardAPI {
 
   async timeout(time: number) {
     return new Promise((res, rej) => {
-      this.commandQueueWrapper.commandQueue.push({
+      this.commandQueueWrapper?.commandQueue.push({
         res,
         rej,
         args: () =>
@@ -577,7 +579,7 @@ export class KeyboardAPI {
             }, time),
           ),
       });
-      if (!this.commandQueueWrapper.isFlushing) {
+      if (this.commandQueueWrapper?.isFlushing === undefined) {
         this.flushQueue();
       }
     });
@@ -588,19 +590,22 @@ export class KeyboardAPI {
     bytes: Array<number> = [],
   ): Promise<number[]> {
     return new Promise((res, rej) => {
-      this.commandQueueWrapper.commandQueue.push({
+      this.commandQueueWrapper?.commandQueue.push({
         res,
         rej,
         args: [command, bytes],
       });
-      if (!this.commandQueueWrapper.isFlushing) {
+      if (this.commandQueueWrapper?.isFlushing === undefined) {
         this.flushQueue();
       }
     });
   }
 
   async flushQueue() {
-    if (this.commandQueueWrapper.isFlushing === true) {
+    if (this.commandQueueWrapper?.isFlushing === true) {
+      return;
+    }
+    if (this.commandQueueWrapper === undefined) {
       return;
     }
     this.commandQueueWrapper.isFlushing = true;
@@ -625,7 +630,7 @@ export class KeyboardAPI {
   }
 
   getHID() {
-    return cache[this.kbAddr].hid;
+    return cache[this.kbAddr]?.hid;
   }
 
   async _hidCommand(command: Command, bytes: Array<number> = []): Promise<any> {

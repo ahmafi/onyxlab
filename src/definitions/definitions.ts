@@ -9,7 +9,7 @@ export type Definition = {
     rows: number;
     cols: number;
   };
-  qmkLayout: { matrix: number[]; x: number; y: number; r: number }[];
+  qmkLayout: { matrix: number[]; x: number; y: number; r?: number }[];
 };
 
 const definitions: { [key: string]: Definition } = {

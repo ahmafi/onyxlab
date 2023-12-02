@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./Header";
 import clsx from "clsx";
 import GoogleAnalytics from "./google-analytics";
+import Clarity from "./clarity";
 
 // https://dev.to/sdorra/nextjs-13-fonts-with-tailwind-2l4l
 const inter = Nunito({ subsets: ["latin"], variable: "--english-font" });
@@ -37,6 +38,7 @@ export default function RootLayout({
     >
       <head>
         <GoogleAnalytics />
+        <Clarity />
         <link
           rel="apple-touch-icon"
           sizes="180x180"

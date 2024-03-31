@@ -4,7 +4,7 @@ import Drawer from "@/components/drawer";
 import KeyShape from "@/components/key-shape";
 import useKeyboardStore from "@/store/keyboard-store";
 import useSelectionStore, { KeyParts } from "@/store/selection-store";
-import { MT_HELD, setModTap } from "@/utils/key-translator";
+import { MT_HELD, getKey, setModTap } from "@/utils/key-translator";
 import { keys } from "@/utils/keys";
 import clsx from "clsx";
 
@@ -21,33 +21,129 @@ export default function KeySelector() {
     updateKeyboard: state.updateKeyboard,
   }));
 
+  console.log("changingKey", changingKey);
+
   const changeKey = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    const id = event.currentTarget.dataset["id"];
+    const selectedKeyName = event.currentTarget.dataset["id"];
 
-    if (changingKey === null || typeof id !== "string") return;
+    if (changingKey === null || typeof selectedKeyName !== "string") return;
 
-    const clickedKeycode = await keyboard?.getKey(
-      selectedLayer,
-      changingKey.position.row,
-      changingKey.position.col,
-    );
+    console.log(selectedKeyName);
 
-    if (clickedKeycode === undefined) return;
+    // const clickedKeycode = await keyboard?.getKey(
+    //   selectedLayer,
+    //   changingKey.position.row,
+    //   changingKey.position.col
+    // );
+    //
+    // if (clickedKeycode === undefined) return;
 
-    await keyboard?.setKey(
-      selectedLayer,
-      changingKey.position.row,
-      changingKey.position.col,
-      // keys[id].keycode,
-      setModTap(clickedKeycode, id),
-    );
+    // 1. clicked + held +
+    // 2. clicked + held -
+    // 3. clicked - held +
+    // 4. clicked - held -
+    //
+    // a. clicked
+    // b. held
+
+    let newKeyCode = changingKey.key?.keycode;
+
+    if (changingKey.part === "clicked") {
+      if (
+        changingKey.key?.keyName !== undefined &&
+        changingKey.key?.heldKeyName !== undefined
+      ) {
+        newKeyCode = setModTap(selectedKeyName, changingKey.key.heldKeyName);
+        await keyboard?.setKey(
+          selectedLayer,
+          changingKey.position.row,
+          changingKey.position.col,
+          newKeyCode
+        );
+      }
+      if (
+        changingKey.key?.keyName !== undefined &&
+        changingKey.key?.heldKeyName === undefined
+      ) {
+        newKeyCode = keys[selectedKeyName].keycode;
+        await keyboard?.setKey(
+          selectedLayer,
+          changingKey.position.row,
+          changingKey.position.col,
+          newKeyCode
+        );
+      }
+      if (
+        changingKey.key?.keyName === undefined &&
+        changingKey.key?.heldKeyName !== undefined
+      ) {
+        newKeyCode = setModTap(selectedKeyName, changingKey.key.heldKeyName);
+        await keyboard?.setKey(
+          selectedLayer,
+          changingKey.position.row,
+          changingKey.position.col,
+          newKeyCode
+        );
+      }
+      if (
+        changingKey.key?.keyName === undefined &&
+        changingKey.key?.heldKeyName !== undefined
+      ) {
+        newKeyCode = keys[selectedKeyName].keycode;
+        await keyboard?.setKey(
+          selectedLayer,
+          changingKey.position.row,
+          changingKey.position.col,
+          newKeyCode
+        );
+      }
+    }
+
+    if (changingKey.part === "held") {
+      if (
+        changingKey.key?.keyName !== undefined &&
+        changingKey.key?.heldKeyName !== undefined
+      ) {
+        newKeyCode = setModTap(changingKey.key.keyName, selectedKeyName);
+        await keyboard?.setKey(
+          selectedLayer,
+          changingKey.position.row,
+          changingKey.position.col,
+          newKeyCode
+        );
+      }
+      if (
+        changingKey.key?.keyName !== undefined &&
+        changingKey.key?.heldKeyName === undefined
+      ) {
+        newKeyCode = setModTap(changingKey.key.keyName, selectedKeyName);
+        await keyboard?.setKey(
+          selectedLayer,
+          changingKey.position.row,
+          changingKey.position.col,
+          newKeyCode
+        );
+      }
+    }
+
+    // console.log(changingKey.key);
+    //
+    // await keyboard?.setKey(
+    //   selectedLayer,
+    //   changingKey.position.row,
+    //   changingKey.position.col,
+    //   changingKey.key?.held !== undefined || changingKey.part === "held"
+    //     ? setModTap(clickedKeycode, id)
+    //     : keys[id].keycode
+    // );
+    //
+    if (newKeyCode === undefined) return;
 
     updateChangingKey({
       position: changingKey.position,
-      part: "clicked",
-      key: keys[id],
+      part: changingKey.part,
+      key: getKey(newKeyCode),
     });
-
     updateKeyboard();
   };
 
@@ -60,6 +156,8 @@ export default function KeySelector() {
     });
   };
 
+  // console.log(changingKey?.key?.keyName);
+
   return (
     <Drawer open={changingKey !== null} onClose={unsetChangingKey}>
       <div className="flex gap-4 h-full items-center">
@@ -70,7 +168,7 @@ export default function KeySelector() {
             onClick={setChangingPart}
             className={clsx(
               "px-3 py-1 rounded-lg border-2 border-current",
-              changingKey?.part === "clicked" && "animate-pulse text-info",
+              changingKey?.part === "clicked" && "animate-pulse text-info"
             )}
           >
             {changingKey?.key?.unicode ?? changingKey?.key?.click}
@@ -78,9 +176,13 @@ export default function KeySelector() {
           <button
             data-part="held"
             onClick={setChangingPart}
+            disabled={
+              changingKey?.key?.keyName === undefined ||
+              changingKey?.key.keyName === "KC_NO"
+            }
             className={clsx(
-              "px-3 py-1 rounded-lg border-2 border-current",
-              changingKey?.part === "held" && "animate-pulse text-info",
+              "px-3 py-1 rounded-lg border-2 border-current disabled:border-gray-600",
+              changingKey?.part === "held" && "animate-pulse text-info"
             )}
           >
             {changingKey?.key?.heldUnicode ??

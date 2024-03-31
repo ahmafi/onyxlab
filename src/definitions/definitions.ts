@@ -12,9 +12,9 @@ export type Definition = {
   qmkLayout: { matrix: number[]; x: number; y: number; r?: number }[];
 };
 
-const definitions: { [key: string]: Definition } = {
-  [ks1.productId]: ks1,
-  [mini.productId]: mini,
+const definitions: { [key: number]: Definition } = {
+  [Number(ks1.productId)]: ks1,
+  [Number(mini.productId)]: mini,
 };
 
 export default definitions;

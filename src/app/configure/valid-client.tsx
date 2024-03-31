@@ -8,7 +8,7 @@ export default function SetupConnection(props: PropsWithChildren<object>) {
   const [hasHIDSupport, setHasHIDSupport] = useState<boolean | null>(null);
   const connectedDevice = useKeyboardStore((state) => state.connectedDevice);
   const updateConnectedDevice = useKeyboardStore(
-    (state) => state.updateConnectedDevice,
+    (state) => state.updateConnectedDevice
   );
 
   useEffect(() => {
@@ -20,13 +20,13 @@ export default function SetupConnection(props: PropsWithChildren<object>) {
 
     (async () => {
       const alreadyConnectedDevices = await HID.getFilteredDevices();
-      console.log(alreadyConnectedDevices);
+      // console.log(alreadyConnectedDevices);
       if (alreadyConnectedDevices.length === 0) {
         updateConnectedDevice(null);
         return;
       }
       const devices = await HID.devices(false);
-      console.log(devices);
+      // console.log(devices);
       if (devices.length > 0) {
         updateConnectedDevice(devices[0]);
       }

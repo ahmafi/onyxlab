@@ -3,6 +3,7 @@ type categories = "Basic" | "Media" | "Layers" | "Special";
 export type Key = {
   keycode: number;
   keyName?: string;
+  heldKeyName?: string;
   click?: string;
   clickMac?: string;
   clickWindows?: string;
@@ -232,7 +233,7 @@ export const keys: Record<string, Key> = {
 
 export const keycodeToKey: { [key: number]: Key } = {};
 Object.entries(keys).forEach(
-  ([keyName, key]) => (keycodeToKey[key.keycode] = { ...key, keyName }),
+  ([keyName, key]) => (keycodeToKey[key.keycode] = { ...key, keyName })
 );
 
 //  1 00000 00000000

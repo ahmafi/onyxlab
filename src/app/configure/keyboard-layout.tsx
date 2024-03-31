@@ -19,7 +19,7 @@ export default function KeyboardLayout() {
       selectedLayer: state.layer,
       changingKey: state.changingKey,
       unsetChangingKey: state.unsetChangingKey,
-    }),
+    })
   );
 
   const maxX = useRef(0);
@@ -27,7 +27,7 @@ export default function KeyboardLayout() {
   const keySize = _.clamp(
     maxX.current === 0 ? 0 : containerBounds.width / (maxX.current + 1),
     64,
-    88,
+    88
   );
 
   return (
@@ -43,7 +43,7 @@ export default function KeyboardLayout() {
       {definition?.qmkLayout.map((key, keyIndex) => {
         maxX.current = Math.max(maxX.current, key.x);
         maxY.current = Math.max(maxY.current, key.y);
-        console.log(key.r);
+        // console.log(key.r);
         return (
           <div
             className="absolute p-1 flex items-center justify-center"

@@ -19,7 +19,7 @@ type Action = {
 
 const updateMatrix = async (
   keyboard: KeyboardAPI,
-  matrixSize: Definition["matrix"],
+  matrixSize: Definition["matrix"]
 ) => {
   const layers = await keyboard.getLayerCount();
   const matrix: number[][] = [];
@@ -40,8 +40,7 @@ const useKeyboardStore = create<State & Action>((set) => ({
       set(() => ({ connectedDevice }));
       return;
     }
-    const definition =
-      definitions[`0x${connectedDevice.productId.toString(16)}`];
+    const definition = definitions[connectedDevice.productId];
     const keyboard = new KeyboardAPI(connectedDevice.path);
     const layers = await keyboard.getLayerCount();
     const matrix = await updateMatrix(keyboard, definition.matrix);
@@ -52,8 +51,7 @@ const useKeyboardStore = create<State & Action>((set) => ({
     if (devices.length === 0) return;
 
     const connectedDevice = (await HID.devices(false))[0];
-    const definition =
-      definitions[`0x${connectedDevice.productId.toString(16)}`];
+    const definition = definitions[connectedDevice.productId];
     const keyboard = new KeyboardAPI(connectedDevice.path);
     const layers = await keyboard.getLayerCount();
     const matrix = await updateMatrix(keyboard, definition.matrix);

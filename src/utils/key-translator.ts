@@ -44,13 +44,14 @@ export const MT_HELD: Record<string, Key> = {
 };
 
 type MT_HELD_KEYS = keyof typeof MT_HELD;
+type KEYS_NAMES = keyof typeof keys;
 
 export function getKey(keycode: number): Key {
   const func = Object.entries(funcs)
     .slice()
     .reverse()
     .find(([funcName, funcKeycode]) =>
-      (funcKeycode & keycode) === funcKeycode ? [funcName, funcKeycode] : false,
+      (funcKeycode & keycode) === funcKeycode ? [funcName, funcKeycode] : false
     );
   if (func) {
     const basicKeyCode = 0xff & keycode;
@@ -62,18 +63,19 @@ export function getKey(keycode: number): Key {
         .find(([modKeyName, { keycode: modKeycode }]) =>
           (modKeycode & keycode) === modKeycode
             ? [modKeyName, modKeycode]
-            : false,
+            : false
         );
 
       return {
         ...keycodeToKey[basicKeyCode],
         ...modifier?.[1],
+        heldKeyName: modifier?.[0],
         keycode: keycode,
       };
     } else if (func[1] === funcs._QK_MOMENTARY) {
       const layer = 0xf & keycode;
       return {
-        click: `MO(${layer})`,
+        held: `MO(${layer})`,
         keycode,
       };
     }
@@ -81,12 +83,32 @@ export function getKey(keycode: number): Key {
   return keycodeToKey[keycode] ?? undefined;
 }
 
-export function setModTap(clicked: number, held: MT_HELD_KEYS) {
-  if (clicked > 0xff) {
-    throw new Error("can't set this key for clicked (>0xFF)");
-  }
+export function setModTap(clicked: KEYS_NAMES, held: MT_HELD_KEYS) {
+  console.log("clicked", clicked);
+  console.log("held", held);
+  // if (clicked > 0xff) {
+  //   throw new Error("can't set this key for clicked (>0xFF)");
+  // }
 
-  const keycode = funcs._QK_MOD_TAP | MT_HELD[held].keycode | clicked;
+  const keycode =
+    funcs._QK_MOD_TAP | MT_HELD[held].keycode | keys[clicked].keycode;
+  // 100 00000 000000 MT
+  //      1000 000000 LSFT
+  //              100 A
+
+  console.log("final", keycode);
+  return keycode;
+}
+
+export function setLayerTap(clicked: KEYS_NAMES, held: MT_HELD_KEYS) {
+  console.log("clicked", clicked);
+  console.log("held", held);
+  // if (clicked > 0xff) {
+  //   throw new Error("can't set this key for clicked (>0xFF)");
+  // }
+
+  const keycode =
+    funcs._QK_LAYER_TAP | MT_HELD[held].keycode | keys[clicked].keycode;
   // 100 00000 000000 MT
   //      1000 000000 LSFT
   //              100 A

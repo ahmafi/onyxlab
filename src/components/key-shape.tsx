@@ -6,6 +6,7 @@ export default function KeyShape(props: {
   keyData: Key | undefined;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
+  disabled?: boolean;
   id?: string;
 }) {
   const { fontSize: fontSizeClicked, ref: refClicked } = useFitText();
@@ -19,9 +20,10 @@ export default function KeyShape(props: {
       <button
         onClick={props.onClick}
         data-id={props.id}
+        disabled={props.disabled}
         className={twMerge(
           "relative p-1 text-xl flex flex-col items-center leading-none w-full h-full font-medium btn btn-outline",
-          props.className,
+          props.className
         )}
       >
         <div
